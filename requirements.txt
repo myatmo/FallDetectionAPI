@@ -1,0 +1,10 @@
+fastapi
+gunicorn
+uvicorn
+jinja2
+requests
+opencv-python
+numpy
+imutils
+python-multipart
+shutil

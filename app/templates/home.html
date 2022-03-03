@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>  
+  </head>
+  <body>    
+    <div class="container">
+      <div class='text-center my-5 mx-5'>
+          <h1>Fall Detection API</h1>
+      </div>
+      <!-- <form method="POST"> -->
+          <div class="form-group">
+            <label for="video_file">Select video file (.mp4, .avi)</label>
+            <input type="file" class="form-control-file" id="fileUpload">
+            <br>
+            <button class="btn btn-success" onclick="runVideo()">Run Fall Detection</button>
+            <br><br>
+            <img id="video_img">
+          </div>
+          <div>
+            <div class="form-group">
+                <h3>Using Live Stream</h3>
+                <button class="btn btn-success" onclick="runWebcam()">Run Webcam</button>
+                <br><br>
+                <img id="webcam">
+            </div>
+        </div>
+        <!-- </form> -->
+  </div>
+  </body>
+</html>
+
+<script>
+  document.querySelector("#fileUpload").addEventListener("change", (event) => {
+    var files = event.target.files;
+    var output = URL.createObjectURL(files[0]);
+    //video_img.src = output;
+    var formData = new FormData();
+    var endpoint = '/upload_video';
+
+    if (files.length == 1) {
+      formData.append('video', files[0])
+    }
+    else {
+      swal("Invalid Input", "Please choose one file!");
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: endpoint,
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+          if (endpoint != '/upload_video') {
+            swal("Invalid Input", "Please try again!");
+          }
+        }
+    });
+    
+  });
+
+  // function uploadFile() {
+  //   var files = document.getElementById("fileUpload").files
+  //   var formData = new FormData();
+  //   var endpoint = '/upload_video';
+  // }
+
+  function runVideo() {
+    var files = document.getElementById("fileUpload").files
+    var endpoint = '/run_video'
+    var video_img = document.getElementById("video_img");
+    if (files.length == 1) {
+      video_img.src = endpoint;
+    }
+    else {
+      swal("Invalid Input", "Please choose one file!");
+    }
+    $.ajax({
+        type: 'GET',
+        url: endpoint,
+        success: function(data) {
+          if (endpoint != '/run_video') {
+            swal("Error", "Problem loading video!");
+          }
+        }
+    });
+  }
+
+  function runWebcam() {
+    var webcam_endpoint = '/run_webcam';
+    var webcam = document.getElementById("webcam");
+    webcam.src = webcam_endpoint;
+
+    $.ajax({
+        type: 'GET',
+        url: webcam_endpoint,
+        success: function(data) {
+          if (endpoint != '/run_webcam') {
+            swal("Error", "Problem loading webcam!");
+            
+          }
+        }
+    });
+  }
+
+</script>
